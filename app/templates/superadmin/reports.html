@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Download Reports</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+  {% for report in ['users', 'products', 'orders'] %}
+  <div class="border p-4 rounded-lg shadow">
+    <h3 class="font-semibold capitalize">{{ report }} Report</h3>
+    <div class="mt-2 space-x-2">
+      <a href="{{ url_for('superadmin.download_csv', data_type=report) }}" class="text-blue-600 underline">CSV</a>
+      <a href="{{ url_for('superadmin.download_excel', data_type=report) }}" class="text-green-600 underline">Excel</a>
+      <a href="{{ url_for('superadmin.download_pdf', data_type=report) }}" class="text-red-600 underline">PDF</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

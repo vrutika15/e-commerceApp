@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Order Confirmation</h2>
+        <hr>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Order Summary</h4>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items %}
+                        <tr>
+                            <td>{{ item.product.title }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.product.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <hr>
+                <h5>Total: ${{ order.total_amount }}</h5>
+            </div>
+            <div class="col-md-6">
+                <h4>Shipping Details</h4>
+                <p><strong>Shipping Address:</strong></p>
+                <p>{{ order.shipping_address }}</p>
+                <p><strong>Contact:</strong> {{ order.user.email }}</p>
+
+                <hr>
+                <h5>Status: {{ order.status }}</h5>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="{{ url_for('order.home') }}" class="btn btn-primary">Continue Shopping</a>
+            <a href="{{ url_for('order.view_orders') }}" class="btn btn-secondary">View Orders</a>
+        </div>
+    </div>
+</body>
+</html>

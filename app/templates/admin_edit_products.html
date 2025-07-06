@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Edit Product</h2>
+        <div class="text-right">
+            <a href="{{ url_for('admin.manage_products') }}" class="btn btn-secondary">Back to Manage Products</a>
+        </div>
+        <hr>
+        
+        <!-- Edit Product Form -->
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.title.label(class="control-label") }}
+                {{ form.title(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.price.label(class="control-label") }}
+                {{ form.price(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.description.label(class="control-label") }}
+                {{ form.description(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.image_url.label(class="control-label") }}
+                <img src="{{ url_for('static', filename=product.image_url) }}" alt="Current Image" width="100">
+                {{ form.image_url(class="form-control", type="file") }}
+            </div>
+            <div class="form-group">
+                {{ form.category_id.label(class="control-label") }}
+                {{ form.category_id(class="form-control") }}
+            </div>
+            <button type="submit" class="btn btn-success">Update Product</button>
+        </form>
+    </div>
+</body>
+</html>

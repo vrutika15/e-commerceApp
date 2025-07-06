@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Orders</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">View Orders</h2>
+        <div class="text-right">
+            <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+        <hr>
+
+        <!-- Order List -->
+        <h4 class="mt-4">All Orders</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>${{ order.total_amount }}</td>
+                    <td>{{ order.status }}</td>
+                    <td>
+                        <!-- View Order Details Button -->
+                        <a href="{{ url_for('main.view_order_details', order_id=order.id) }}" class="btn btn-info">View Details</a>
+
+                        <!-- Mark as Completed button (only if the order is not already completed) -->
+                        {% if order.status == 'Pending' %}
+                            <a href="{{ url_for('main.update_order_status', order_id=order.id, status='Completed') }}" class="btn btn-success">Mark as Completed</a>
+                        {% elif order.status == 'Completed' %}
+                            <!-- Mark as Pending button (only if the order is already completed) -->
+                            <a href="{{ url_for('main.update_order_status', order_id=order.id, status='Pending') }}" class="btn btn-warning">Mark as Pending</a>
+                        {% endif %}
+                        
+                        <!-- Cancel Order button (optional, if you have cancel functionality) -->
+                        <a href="{{ url_for('main.cancel_order', order_id=order.id) }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

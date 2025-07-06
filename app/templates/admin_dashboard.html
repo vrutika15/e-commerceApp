@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Admin Dashboard</h2>
+        <div class="text-right">
+            <a href="{{ url_for('misc.logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+        <hr>
+
+        <div class="mb-3">
+            <a href="{{ url_for('admin.manage_products') }}" class="btn btn-primary">Add New Product</a>
+        </div>
+
+        <h4>All Products</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Image</th>  
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        {% if product.image_url %}
+                            <img src="{{ url_for('static', filename=product.image_url) }}" alt="Product Image" width="80" height="80">
+                        {% else %}
+                            <span class="text-muted">No Image</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ product.title }}</td>
+                    <td>₹{{ product.price }}</td>
+                    <td>
+                        <a href="{{ url_for('product.edit_product', product_id=product.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{{ url_for('product.delete_product', product_id=product.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

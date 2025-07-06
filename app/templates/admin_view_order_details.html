@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Order #{{ order.id }} Details</h2>
+        <div class="text-right">
+            <a href="{{ url_for('main.view_orders') }}" class="btn btn-secondary">Back to Orders</a>
+        </div>
+        <hr>
+
+        <!-- Order Summary -->
+        <h4>Order Summary</h4>
+        <p><strong>User:</strong> {{ order.user.username }}</p>
+        <p><strong>Email:</strong> {{ order.user.email }}</p>
+        <p><strong>Total Amount:</strong> ${{ order.total_amount }}</p>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+
+        <hr>
+
+        <!-- Order Items -->
+        <h4>Ordered Items</h4>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items %}
+                <tr>
+                    <td>{{ item.product.title }}</td>
+                    <td>${{ item.product.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ item.product.price * item.quantity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <hr>
+
+        <!-- Action Buttons -->
+        {% if order.status != 'Completed' %}
+            <div class="text-right">
+                <a href="{{ url_for('main.update_order_status', order_id=order.id, status='Completed') }}" class="btn btn-success">Mark as Completed</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

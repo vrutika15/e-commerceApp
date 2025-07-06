@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Manage Products{% endblock %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Products</h2>
+<table class="w-full border">
+  <thead><tr><th>ID</th><th>Name</th><th>Price</th></tr></thead>
+  <tbody>
+    {% for product in products %}
+    <tr><td>{{ product.id }}</td><td>{{ product.name }}</td><td>{{ product.price }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
