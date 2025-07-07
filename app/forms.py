@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField, SelectField
-from wtforms.validators import DataRequired, Length, EqualTo, Email, URL, Optional
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, DecimalField, SelectField, IntegerField, TextAreaField
+from wtforms.validators import DataRequired, Length, EqualTo, Email, URL, Optional, NumberRange
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -27,3 +27,8 @@ class SignupForm(FlaskForm):
         EqualTo('password', message='Passwords must match.')
     ])
     submit = SubmitField('Sign Up')
+
+class ReviewForm(FlaskForm):
+    rating = IntegerField('Rating', validators=[DataRequired(), NumberRange(min=1, max=5)])
+    comment = TextAreaField('Comment', validators=[DataRequired(), Length(max=500)])
+    submit = SubmitField('Submit Review')

@@ -1,109 +1,81 @@
+<!-- Product Details Page -->
 {% extends 'base.html' %}
-{% block title %}{{ product.title }}{% endblock %}
-
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
-        <!-- Product Image -->
-        <div class="col-md-6">
-            <div class="main-image mb-3 text-center">
-                <img src="{{ url_for('static', filename=product.image_url) }}" class="img-fluid border" alt="{{ product.title }}" style="max-height: 400px;">
+
+<!-- Product Display -->
+<div class="product-detail">
+    <h1>{{ product.title }}</h1>
+    <p>{{ product.description }}</p>
+    <p><strong>Price:</strong> ${{ product.price }}</p>
+    <img src="{{ url_for('static', filename=product.image_url) }}" alt="{{ product.title }} image" class="product-image">
+    
+    <!-- Add to Cart Button -->
+    {% if current_user.is_authenticated %}
+        <form action="{{ url_for('user.add_to_cart', product_id=product.id) }}" method="POST">
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+    {% else %}
+        <a href="{{ url_for('user.user_login') }}" class="btn btn-primary">Login to Add to Cart</a>
+    {% endif %}
+
+    <hr>
+
+    <!-- Write a Review Button -->
+    {% if current_user.is_authenticated %}
+        <button class="btn btn-secondary" id="write-review-btn">Write a Review</button>
+    {% else %}
+        <a href="{{ url_for('user.user_login') }}" class="btn btn-secondary">Login to Write a Review</a>
+    {% endif %}
+
+    <!-- Review Form (Initially Hidden) -->
+    <div id="review-form" style="display: none;">
+        <form method="POST" action="{{ url_for('product.product_detail', product_id=product.id) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label for="rating">Rating (1-5):</label>
+                {{ form.rating(class="form-control") }}
             </div>
-        </div>
-
-        <!-- Product Details -->
-        <div class="col-md-6">
-            <h2>{{ product.title }}</h2>
-            <p class="text-success fw-bold">In Stock</p>
-            <h4>₹{{ product.price }}</h4>
-
-            <div class="mb-3">
-                <label for="quantity">Quantity:</label>
-                <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control w-25">
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                {{ form.comment(class="form-control") }}
             </div>
-
-            {% if current_user.is_authenticated %}
-                <button class="btn btn-primary" onclick="addToCart('{{ product.id }}')">Add to Cart</button>
-                <button class="btn btn-outline-danger" onclick="addToWishlist('{{ product.id }}')">❤ Wishlist</button>
-            {% else %}
-                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Login to Add to Cart</a>
-                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-danger">❤ Login to Wishlist</a>
-            {% endif %}
-
-            <div class="mt-4">
-                <h5>Description:</h5>
-                <p>{{ product.description }}</p>
-            </div>
-        </div>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </form>
     </div>
 
-    <!-- Reviews Section -->
-    <div class="mt-5">
-        <h4>Customer Reviews</h4>
+    <hr>
 
-        {% for review in reviews %}
-            <div class="border p-3 mb-2">
-                <strong>{{ review.user.username }}</strong> - 
-                <span class="text-warning">★ {{ review.rating }}/5</span>
-                <p>{{ review.comment }}</p>
-            </div>
-        {% else %}
-            <p>No reviews yet.</p>
-        {% endfor %}
-
-        {% if current_user.is_authenticated %}
-            <button class="btn btn-sm btn-success mt-2" onclick="toggleReviewForm()">Write a Review</button>
-
-            <div id="reviewForm" class="mt-3" style="display: none;">
-                <form method="POST" action="{{ url_for('product.submit_review', product_id=product.id) }}">
-                    <div class="mb-2">
-                        <label for="rating">Rating (1-5):</label>
-                        <input type="number" name="rating" min="1" max="5" class="form-control w-25" required>
-                    </div>
-                    <div class="mb-2">
-                        <label for="comment">Comment:</label>
-                        <textarea name="comment" rows="3" class="form-control" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
-                </form>
-            </div>
-        {% else %}
-            <p><a href="{{ url_for('auth.login') }}">Login to write a review</a></p>
-        {% endif %}
-    </div>
+    <!-- Display Existing Reviews -->
+    <h3>Reviews</h3>
+    {% for review in reviews %}
+        <div class="review">
+            <p><strong>{{ review.user.username }}:</strong> {{ review.rating }} / 5</p>
+            <p>{{ review.comment }}</p>
+        </div>
+    {% else %}
+        <p>No reviews yet. Be the first to review!</p>
+    {% endfor %}
 
     <!-- Related Products -->
-    <div class="mt-5">
-        <h4>Related Products</h4>
-        <div class="row">
-            {% for related in related_products %}
-                <div class="col-6 col-md-3 mb-3 text-center">
-                    <a href="{{ url_for('product.product_detail', product_id=related.id) }}">
-                        <img src="{{ url_for('static', filename='images/' ~ related.image_url) }}" class="img-fluid" alt="{{ related.title }}" style="max-height: 150px;">
-                        <p class="mt-2">{{ related.title }}</p>
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
+    <h3>Related Products</h3>
+    <div class="related-products">
+        {% for related_product in related_products %}
+            <div class="related-product">
+                <h4>{{ related_product.title }}</h4>
+                <p>${{ related_product.price }}</p>
+                <a href="{{ url_for('product.product_detail', product_id=related_product.id) }}" class="btn btn-info">View Details</a>
+            </div>
+        {% endfor %}
     </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-    function addToCart(productId) {
-        console.log("Add to cart clicked for product:", productId);
-        // TODO: Call your Flask route with AJAX or form submission
-    }
-
-    function addToWishlist(productId) {
-        console.log("Add to wishlist clicked for product:", productId);
-        // TODO: Call your Flask route with AJAX or form submission
-    }
-
-    function toggleReviewForm() {
-        const form = document.getElementById('reviewForm');
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
+    // Toggle the review form visibility
+    document.getElementById('write-review-btn').addEventListener('click', function() {
+        var reviewForm = document.getElementById('review-form');
+        reviewForm.style.display = reviewForm.style.display === 'none' ? 'block' : 'none';
+    });
 </script>
+
 {% endblock %}

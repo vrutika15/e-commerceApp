@@ -1,33 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mt-4">Your Cart</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in cart_items %}
-        <tr>
-            <td>{{ item.product.title }}</td>
-            <td>${{ item.product.price }}</td>
-            <td>{{ item.quantity }}</td>
-            <td>${{ item.product.price * item.quantity }}</td>
-            <td>
-                <a href="{{ url_for('user.update_cart', cart_id=item.id, action='increase') }}" class="btn btn-success">+</a>
-                <a href="{{ url_for('user.update_cart', cart_id=item.id, action='decrease') }}" class="btn btn-warning">-</a>
-                <a href="{{ url_for('user.remove_from_cart', cart_id=item.id) }}" class="btn btn-danger">Remove</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<h4>Total: ${{ total_amount }}</h4>
-<a href="{{ url_for('user.checkout') }}" class="btn btn-primary">Proceed to Checkout</a>
+<div class="container mt-4">
+    <h2>Your Cart</h2>
+
+    {% if cart_items %}
+    <table class="table table-bordered table-hover mt-3">
+        <thead class="thead-light">
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.title }}</td>
+                <td>${{ '%.2f' | format(item.product.price) }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ '%.2f' | format(item.product.price * item.quantity) }}</td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('user.update_cart', cart_id=item.id, action='increase') }}" class="btn btn-sm btn-success">+</a>
+                        <a href="{{ url_for('user.update_cart', cart_id=item.id, action='decrease') }}" class="btn btn-sm btn-warning">-</a>
+                        <a href="{{ url_for('user.remove_from_cart', cart_id=item.id) }}" class="btn btn-sm btn-danger">Remove</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h4>Total: ${{ '%.2f' | format(total_amount) }}</h4>
+        <a href="{{ url_for('user.checkout') }}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
+    </div>
+
+    {% else %}
+    <div class="alert alert-info mt-4" role="alert">
+        Your cart is currently empty.
+    </div>
+    <a href="{{ url_for('main.home') }}" class="btn btn-outline-primary">Continue Shopping</a>
+    {% endif %}
+</div>
 {% endblock %}
